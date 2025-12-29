@@ -33,9 +33,12 @@ export class TSVFileReader {
 
       const offer = OfferFactory.createFromTSV(parts, users);
 
-      if (offer) {
-        onLine(offer);
+      if (!offer) {
+        //console.log('❌ Offer rejected:', parts);
+        continue;
       }
+
+      onLine(offer);
     }
   }
 }

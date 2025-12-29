@@ -48,6 +48,12 @@ type RawOffer = {
   location: string;
 };
 
+function reject(reason: string, value?: unknown): null {
+  console.log(`❌ Reject offer: ${reason}`, value ?? '');
+  return null;
+}
+
+
 export class OfferFactory {
 
   // 🔹 основной метод
@@ -60,33 +66,28 @@ export class OfferFactory {
         title.length < MIN_TITLE_LENGTH || title.length > MAX_TITLE_LENGTH ||
         description.length < MIN_DESCRIPTION_LENGTH || description.length > MAX_DESCRIPTION_LENGTH
       ) {
-        return null;
+        return reject('Invalid title or description length', { title, description });
       }
 
-      let publishDate: Date;
-      if (rawData.publishDate.includes('.')) {
-        const [d, m, y] = rawData.publishDate.split('.');
-        publishDate = new Date(Number(y), Number(m) - 1, Number(d));
-      } else {
-        publishDate = new Date(rawData.publishDate);
+      const publishDate = new Date(rawData.publishDate);
+
+      if (Number.isNaN(publishDate.getTime())) {
+        return reject('Invalid publish date', rawData.publishDate);
       }
 
-      if (isNaN(publishDate.getTime())) {
-        return null;
-      }
 
       if (!Object.values(CityName).includes(rawData.city as CityName)) {
-        return null;
+        return reject('Invalid city', rawData.city);
       }
       const city = rawData.city as CityName;
 
       if (!rawData.previewImage) {
-        return null;
+        return reject('Invalid preview image', rawData.previewImage);
       }
 
       const images = rawData.images.split(' ').filter(Boolean);
       if (images.length !== IMAGES_COUNT) {
-        return null;
+        return reject('Invalid images count', images);
       }
 
       const isPremium = rawData.isPremium.toLowerCase() === 'true';
@@ -94,11 +95,11 @@ export class OfferFactory {
 
       const rating = parseFloat(rawData.rating.replace(',', '.'));
       if (rating < MIN_RATING || rating > MAX_RATING) {
-        return null;
+        return reject('Invalid rating', rating);
       }
 
       if (!Object.values(PropertyType).includes(rawData.type as PropertyType)) {
-        return null;
+        return reject('Invalid property type', rawData.type)
       }
       const type = rawData.type as PropertyType;
 
@@ -120,12 +121,12 @@ export class OfferFactory {
         .filter((a) => Object.values(Amenity).includes(a as Amenity)) as Amenity[];
 
       if (!amenities.length) {
-        return null;
+        return reject('No valid amenities', rawData.amenities);
       }
 
       const user = users.find((u) => u.email === rawData.userEmail);
       if (!user) {
-        return null;
+        return reject('User not found', rawData.userEmail);
       }
 
       const commentsCount = Number(rawData.commentsCount);
@@ -141,7 +142,7 @@ export class OfferFactory {
         latitude < LATITUDE_MIN || latitude > LATITUDE_MAX ||
         longitude < LONGITUDE_MIN || longitude > LONGITUDE_MAX
       ) {
-        return null;
+        return reject('Invalid location', rawData.location);
       }
 
       const location: Location = { latitude, longitude };

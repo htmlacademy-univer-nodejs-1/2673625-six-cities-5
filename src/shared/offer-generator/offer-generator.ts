@@ -18,7 +18,7 @@ export class OfferGenerator {
     const isPremium = String(Math.random() > 0.5);
     const isFavorite = 'false';
 
-    const rating = (Math.random() * 5).toFixed(1);
+    const rating = (1 + Math.random() * 4).toFixed(1);
     const type = getRandomItem(Object.values(PropertyType));
     const rooms = getRandomInt(1, 8);
     const guests = getRandomInt(1, 10);
