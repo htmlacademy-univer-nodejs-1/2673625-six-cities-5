@@ -1,77 +1,44 @@
-import { readFileSync } from "fs";
-import { Offer, User } from "../types/index.js";
-import { OfferFactory } from "./factories/offer.factory.js";
+import { createReadStream } from 'node:fs';
+import readline from 'node:readline';
+import { Offer } from '../types/index.js';
+import { OfferFactory } from './factories/offer.factory.js';
+import { User } from '../types/index.js';
 
-export interface FileReader {
-  read(): void;
-}
+export class TSVFileReader {
+  constructor(private readonly filename: string) {}
 
-export class TSVFileReader implements FileReader {
-    private content: string = '';
+  public async read(
+    users: User[],
+    onLine: (offer: Offer) => void
+  ): Promise<void> {
+    const stream = createReadStream(this.filename, {
+      encoding: 'utf-8',
+    });
 
-    constructor(private readonly filename: string) {}
+    const rl = readline.createInterface({
+      input: stream,
+      crlfDelay: Infinity,
+    });
 
-    public read(): void {
-        this.content = readFileSync(this.filename, 'utf-8');
+    for await (const line of rl) {
+      if (!line.trim()) {
+        continue;
+      }
+
+      const parts = line.split('\t');
+
+      if (parts.length !== 17) {
+        continue;
+      }
+
+      const offer = OfferFactory.createFromTSV(parts, users);
+
+      if (!offer) {
+        //console.log('❌ Offer rejected:', parts);
+        continue;
+      }
+
+      onLine(offer);
     }
-
-    public toArray(users: User[]): Offer[] {
-        if (!this.content) {
-            throw new Error('File is not read yet. Call read() method before toArray().');
-        }
-
-        return this.content
-            .split('\n')
-            .filter((line) => line.trim().length > 0)
-            .map((line) => line.trim().split('\t'))
-            .filter((columns) => columns.length === 17)
-            .map((parts) => {
-                const [
-                    title,
-                    description,
-                    publishDate,
-                    city,
-                    previewImage,
-                    images,
-                    isPremium,
-                    isFavorite,
-                    rating,
-                    type,
-                    rooms,
-                    guests,
-                    price,
-                    amenities,
-                    userEmail,
-                    commentsCount,
-                    location,
-                ] = parts;
-                return {
-                    title,
-                    description,
-                    publishDate,
-                    city,
-                    previewImage,
-                    images,
-                    isPremium,
-                    isFavorite,
-                    rating,
-                    type,
-                    rooms,
-                    guests,
-                    price,
-                    amenities,
-                    userEmail,
-                    commentsCount,
-                    location,
-                };
-            })
-            .map((offerData) => {
-                const offer = OfferFactory.create(offerData, users);
-                if (!offer) {
-                    console.log('INVALID OFFER:', offerData);
-                }
-                return offer;
-                })
-            .filter((offer): offer is Offer => offer !== null);
-    }
+  }
 }

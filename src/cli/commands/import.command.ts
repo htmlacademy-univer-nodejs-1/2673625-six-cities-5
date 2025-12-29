@@ -1,9 +1,7 @@
 import { Command } from './command.interface.js';
-import { TSVFileReader } from '../..//shared/file-reader/index.js';
+import { TSVFileReader } from '../../shared/file-reader/index.js';
 import { User, UserType } from '../../shared/types/index.js';
 import chalk from 'chalk';
-import { inspect } from 'node:util';
-
 
 export class ImportCommand implements Command {
   public getName(): string {
@@ -12,7 +10,7 @@ export class ImportCommand implements Command {
 
   public users: User[] = [
     { name: 'name1', email: 'mail1@gmail.com', type: UserType.Pro, avatar: 'Avatar1.png' },
-    { name: 'name1', email: 'mail2@gmail.com', type: UserType.Regular, avatar: 'Avatar2.png' }
+    { name: 'name2', email: 'mail2@gmail.com', type: UserType.Regular, avatar: 'Avatar2.png' }
   ];
 
   public async execute(...parameters: string[]): Promise<void> {
@@ -20,12 +18,15 @@ export class ImportCommand implements Command {
     const fileReader = new TSVFileReader(filename.trim());
 
     try {
-      fileReader.read();
-      const offers = fileReader.toArray(this.users);
-  console.info(chalk.cyan(`Imported ${offers.length} offers from ${filename}`));
-  console.log(inspect(offers, { colors: true, depth: null }));
-    } catch (err) {
+      let count = 0;
 
+      await fileReader.read(this.users, () => {
+        count++;
+        // позже тут будет сохранение в БД
+      });
+
+      console.info(chalk.green(`Imported ${count} offers from ${filename}`));
+    } catch (err) {
       if (!(err instanceof Error)) {
         throw err;
       }

@@ -1,0 +1,65 @@
+{
+  "api": {
+    "titles": [
+      "Уютная квартира в центре",
+      "Просторный дом для семьи",
+      "Апартаменты с видом на город",
+      "Современная студия",
+      "Дом рядом с парком",
+      "Светлая квартира рядом с метро"
+    ],
+    "descriptions": [
+      "Прекрасное жильё с удобным расположением и всем необходимым для комфортного проживания.",
+      "Идеальный вариант для семейного отдыха или длительного проживания.",
+      "Современное и уютное жильё с отличным видом из окна.",
+      "Компактная студия со всем необходимым для комфортной жизни.",
+      "Тихий и уютный дом в зелёном районе города.",
+      "Комфортная квартира с быстрым доступом к транспорту."
+    ],
+    "cities": [
+      "Paris",
+      "Cologne",
+      "Brussels",
+      "Amsterdam",
+      "Hamburg",
+      "Dusseldorf"
+    ],
+    "types": [
+      "apartment",
+      "house"
+    ],
+    "previewImages": [
+      "apartment-01.jpg",
+      "apartment-02.jpg",
+      "apartment-03.jpg",
+      "apartment-04.jpg",
+      "apartment-05.jpg",
+      "apartment-06.jpg"
+    ],
+    "images": [
+      "apartment-01.jpg",
+      "apartment-02.jpg",
+      "apartment-03.jpg",
+      "apartment-04.jpg",
+      "apartment-05.jpg",
+      "apartment-06.jpg"
+    ],
+    "amenities": [
+      "Breakfast",
+      "Washer",
+      "Towels",
+      "Fridge",
+      "Baby seat"
+    ],
+    "users": [
+      "mail1@gmail.com",
+      "mail2@gmail.com"
+    ],
+    "avatars": [
+      "avatar-01.png",
+      "avatar-02.png"
+    ],
+    "ratings": [1, 2, 3, 4, 5],
+    "prices": [1000, 2500, 5000, 8000, 12000]
+  }
+}
